@@ -37,6 +37,7 @@
 - ``remote``
 - ``stash``
 - ``tag``
+- ``worktree``
 
 ### Diff
 

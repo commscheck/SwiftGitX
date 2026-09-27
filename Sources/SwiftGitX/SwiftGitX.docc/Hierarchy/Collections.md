@@ -10,4 +10,4 @@
 - ``RemoteCollection``
 - ``StashCollection``
 - ``TagCollection``
-
+- ``WorktreeCollection``

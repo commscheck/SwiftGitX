@@ -33,6 +33,7 @@ extension Testing.Tag {
     @Tag static var remote: Self
     @Tag static var stash: Self
     @Tag static var tag: Self
+    @Tag static var worktree: Self
 
     // Models
     @Tag static var oid: Self

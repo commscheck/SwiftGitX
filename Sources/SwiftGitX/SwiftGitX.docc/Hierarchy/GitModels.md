@@ -21,3 +21,7 @@
 ### Stash
 
 - ``StashEntry``
+
+### Worktree
+
+- ``Worktree``

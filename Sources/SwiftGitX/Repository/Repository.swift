@@ -267,6 +267,11 @@ extension Repository {
     public var tag: TagCollection {
         TagCollection(repositoryPointer: pointer)
     }
+
+    /// Collection of worktree operations.
+    public var worktree: WorktreeCollection {
+        WorktreeCollection(repositoryPointer: pointer)
+    }
 }
 
 extension SwiftGitXError.Operation {
