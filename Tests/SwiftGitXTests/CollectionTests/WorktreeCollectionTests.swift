@@ -4,6 +4,25 @@ import Testing
 
 @Suite("Worktree Collection", .tags(.worktree, .collection), .serialized)
 final class WorktreeCollectionTests: SwiftGitXTest {
+    @Test("Git directories associate linked checkouts and survive relocation")
+    func gitDirectoryIdentity() throws {
+        let repository = try committedRepository()
+        let source = worktreePath(suffix: "-identity")
+        let linked = try repository.worktree.add(at: source, creatingBranchNamed: "feature")
+        let opened = try Repository.open(at: source)
+        #expect(opened.commonDirectory == repository.path.standardizedFileURL)
+        #expect(linked.gitDirectory == opened.path.standardizedFileURL)
+        #expect(try repository.worktree.main?.gitDirectory == repository.commonDirectory)
+        #expect(linked.gitDirectory != repository.commonDirectory)
+
+        let moved = try repository.worktree.move(linked, to: worktreePath(suffix: "-moved"))
+        #expect(moved.gitDirectory == linked.gitDirectory)
+        try FileManager.default.removeItem(at: moved.path)
+        let missing = try repository.worktree.get(at: moved.path)
+        #expect(!missing.isValid)
+        #expect(missing.gitDirectory == linked.gitDirectory)
+    }
+
     @Test("Main returns the repository's main worktree")
     func mainWorktree() throws {
         let repository = try committedRepository()

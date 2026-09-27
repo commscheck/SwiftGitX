@@ -128,6 +128,13 @@ extension Repository {
         URL(fileURLWithPath: String(cString: git_repository_path(pointer)))
     }
 
+    /// The shared Git administrative directory for this repository and all its worktrees.
+    /// Independent clones have different directories even when they share a remote.
+    public var commonDirectory: URL {
+        URL(fileURLWithPath: String(cString: git_repository_commondir(pointer)), isDirectory: true)
+            .standardizedFileURL
+    }
+
     // TODO: add state property (git_repository_state)
 
     /// Check if the repository is empty.

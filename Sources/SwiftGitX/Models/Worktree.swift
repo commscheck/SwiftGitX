@@ -12,6 +12,11 @@ public struct Worktree: Equatable, Hashable, Sendable {
     /// The filesystem location of the worktree.
     public let path: URL
 
+    /// The checkout's Git administrative directory. This remains unchanged when a linked
+    /// worktree is moved and is available even when its working directory is missing.
+    /// It is a location association, not a globally unique or permanent repository ID.
+    public let gitDirectory: URL
+
     /// Whether this is the repository's main worktree.
     public let isMain: Bool
 

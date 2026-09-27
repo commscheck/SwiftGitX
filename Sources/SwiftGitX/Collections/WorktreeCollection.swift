@@ -395,6 +395,7 @@ extension WorktreeCollection {
 
         return Worktree(
             path: URL(fileURLWithPath: String(cString: workingDirectory), isDirectory: true).standardizedFileURL,
+            gitDirectory: URL(fileURLWithPath: String(cString: commonDirectory), isDirectory: true).standardizedFileURL,
             isMain: true,
             isValid: true,
             isLocked: false,
@@ -403,6 +404,14 @@ extension WorktreeCollection {
     }
 
     private func worktree(from pointer: OpaquePointer) throws(SwiftGitXError) -> Worktree {
+        guard let commonDirectory = git_repository_commondir(repositoryPointer),
+            let name = git_worktree_name(pointer)
+        else {
+            throw SwiftGitXError(
+                code: .error, operation: .worktreeList, category: .worktree,
+                message: "Failed to get worktree administrative directory"
+            )
+        }
         guard let rawPath = git_worktree_path(pointer) else {
             throw SwiftGitXError(
                 code: .error, operation: .worktreeList, category: .worktree,
@@ -431,6 +440,9 @@ extension WorktreeCollection {
 
         return Worktree(
             path: URL(fileURLWithPath: String(cString: rawPath), isDirectory: true).standardizedFileURL,
+            gitDirectory: URL(fileURLWithPath: String(cString: commonDirectory), isDirectory: true)
+                .appendingPathComponent("worktrees", isDirectory: true)
+                .appendingPathComponent(String(cString: name), isDirectory: true).standardizedFileURL,
             isMain: false,
             isValid: isValid,
             isLocked: lockStatus > 0,
