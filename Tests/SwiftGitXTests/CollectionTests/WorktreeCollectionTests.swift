@@ -4,6 +4,39 @@ import Testing
 
 @Suite("Worktree Collection", .tags(.worktree, .collection), .serialized)
 final class WorktreeCollectionTests: SwiftGitXTest {
+    @Test("Main returns the repository's main worktree")
+    func mainWorktree() throws {
+        let repository = try committedRepository()
+        let result = try repository.worktree.main
+        let main = try #require(result)
+        let workingDirectory = try repository.workingDirectory.standardizedFileURL
+
+        #expect(main.path == workingDirectory)
+        #expect(main.isMain)
+    }
+
+    @Test("Main is the same when accessed from a linked worktree")
+    func mainWorktreeFromLinkedWorktree() throws {
+        let repository = try committedRepository()
+        let linkedPath = worktreePath()
+        try repository.worktree.add(at: linkedPath, creatingBranchNamed: "feature")
+
+        let linkedRepository = try Repository.open(at: linkedPath)
+        let result = try linkedRepository.worktree.main
+        let main = try #require(result)
+        let workingDirectory = try repository.workingDirectory.standardizedFileURL
+
+        #expect(main.path == workingDirectory)
+        #expect(main.isMain)
+    }
+
+    @Test("Main is nil for a bare repository")
+    func mainWorktreeInBareRepository() throws {
+        let repository = mockRepository(isBare: true)
+        let main = try repository.worktree.main
+        #expect(main == nil)
+    }
+
     @Test("List includes the main worktree first")
     func listMainWorktree() throws {
         let repository = mockRepository()

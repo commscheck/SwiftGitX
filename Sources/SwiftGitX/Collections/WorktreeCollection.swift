@@ -13,6 +13,7 @@ import libgit2
 /// Access this collection through ``Repository/worktree``.
 ///
 /// ```swift
+/// let mainWorktree = try repository.worktree.main
 /// let worktrees = try repository.worktree.list()
 /// let feature = try repository.branch.get(named: "feature")
 /// let path = URL(fileURLWithPath: "/path/to/feature")
@@ -26,6 +27,13 @@ public struct WorktreeCollection: Sequence, Sendable {
 
     init(repositoryPointer: OpaquePointer) {
         self.repositoryPointer = repositoryPointer
+    }
+
+    /// The repository's main worktree, or `nil` for a bare repository.
+    public var main: Worktree? {
+        get throws(SwiftGitXError) {
+            try mainWorktree()
+        }
     }
 
     /// Retrieves a worktree by its filesystem path.
